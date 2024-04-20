@@ -2,6 +2,8 @@
 
 #include "raylib.h"
 
+#include <cmath>
+
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
 #endif
@@ -37,15 +39,24 @@ namespace Genesis {
 
         m_Renderer.Init();
 
+        m_Game = std::make_unique<Game>();
+
         while (!WindowShouldClose())    // Detect window close button or ESC key
         {
+            m_Time += 0.0167f;
             OnUpdate();
+            OnRender();
         }
 #endif
         CloseWindow();
     }
 
     void Application::OnUpdate()
+    {
+        m_Game->OnUpdate(0.01667f);
+    }
+
+    void Application::OnRender()
     {
         BeginDrawing();
 
@@ -54,8 +65,12 @@ namespace Genesis {
         // DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
 
         m_Renderer.ClearRandom();
+        // m_Renderer.RenderSprite(50, 50, Sprites::torch);
 
-        DrawTextureEx(m_Renderer.GetTexture(), Vector2{0.0f, 0.0f}, 0, 3.0f,  WHITE);
+        m_Game->Render();
+
+        m_Renderer.Update();
+        DrawTextureEx(m_Renderer.GetTexture(), Vector2{0.0f, 0.0f}, 0, (float)m_Specification.Scale,  WHITE);
 
         EndDrawing();
     }

@@ -2,7 +2,9 @@
 
 #include <string>
 
-#include "Renderer.h"
+#include "Graphics/Renderer.h"
+#include "Level/Level.h"
+#include "Game.h"
 
 namespace Genesis {
 
@@ -22,13 +24,16 @@ namespace Genesis {
 
         void Run();
         void OnUpdate();
-
+        void OnRender();
     public:
         static Application& Get();
         static Renderer& GetRenderer() { return Get().m_Renderer; };
     private:
         ApplicationSpecification m_Specification;
         Renderer m_Renderer;
+        std::unique_ptr<Game> m_Game;
+
+        float m_Time = 0.0f;
 
     };
 

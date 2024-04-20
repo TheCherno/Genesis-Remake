@@ -32,12 +32,34 @@ add_executable(${PROJECT_NAME} main.cpp
         Application.h
         Application.cpp
         Application.h
-        Renderer.cpp
-        Renderer.h
+        Graphics/Renderer.cpp
+        Graphics/Renderer.h
         Random.h
+        Level/Level.cpp
+        Level/Level.h
+        Graphics/SpriteSheet.cpp
+        Graphics/SpriteSheet.h
+        Graphics/Sprite.cpp
+        Graphics/Sprite.h
+        Core/Assert.h
+        gpch.h
+        Game.cpp
+        Game.h
+        Graphics/ImageUtils.cpp
+        Graphics/ImageUtils.h
+        Entity/Entity.cpp
+        Entity/Entity.h
+        Entity/Mob.cpp
+        Entity/Mob.h
+        Entity/Player.cpp
+        Entity/Player.h
+        Level/Tile.cpp
+        Level/Tile.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
+target_precompile_headers(${PROJECT_NAME} PUBLIC gpch.h)
 
 # Web Configurations
 if (${PLATFORM} STREQUAL "Web")
