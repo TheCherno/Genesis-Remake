@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "Sound/Sound.h"
+
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
 #endif
@@ -32,6 +34,10 @@ namespace Genesis {
     void Application::Run()
     {
         InitWindow(m_Specification.Width * m_Specification.Scale, m_Specification.Height * m_Specification.Scale, "Genesis");
+        SetExitKey(0);
+        m_Icon = LoadImage("res/icon.png");
+        SetWindowIcon(m_Icon);
+
 #if defined(PLATFORM_WEB)
         emscripten_set_main_loop([this](){ OnUpdate(); }, 0, 1);
 #else
@@ -56,12 +62,16 @@ namespace Genesis {
             }
         }
 #endif
+        CloseAudioDevice();
         CloseWindow();
+        UnloadImage(m_Icon);
     }
 
     void Application::OnUpdate()
     {
         m_Game->OnUpdate(0.01667f);
+        if (Sounds::MusicCurrentlyPlaying)
+            UpdateMusicStream(Sounds::MusicCurrentlyPlaying->GetMusic());
     }
 
     void Application::OnRender()

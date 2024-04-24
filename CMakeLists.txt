@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.28)
 project(Genesis_Cpp)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -s -mwindows")
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -61,13 +65,24 @@ add_executable(${PROJECT_NAME} main.cpp
         Entity/ForestMob.h
         Level/Population.cpp
         Level/Population.h
-        Level/LightTile.cpp
-        Level/LightTile.h
+        Menu/Menu.h
+        Menu/MainMenu.cpp
+        Menu/MainMenu.h
+        Menu/HelpMenu.cpp
+        Menu/HelpMenu.h
+        Menu/AboutMenu.cpp
+        Menu/AboutMenu.h
+        Menu/GameOverMenu.cpp
+        Menu/GameOverMenu.h
+        Sound/Sound.cpp
+        Sound/Sound.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
 target_precompile_headers(${PROJECT_NAME} PUBLIC gpch.h)
+
+target_sources(${PROJECT_NAME} PRIVATE res/app.rc)
 
 # Web Configurations
 if (${PLATFORM} STREQUAL "Web")

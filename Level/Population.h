@@ -10,6 +10,8 @@ namespace Genesis {
 
         void OnUpdate(float ts);
         void OnRender();
+
+        void Reset();
     public:
         inline static double PopulationCount = 2.0;
         inline static double Growth = 0.05;

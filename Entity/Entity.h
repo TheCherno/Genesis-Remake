@@ -23,9 +23,9 @@ namespace Genesis {
         virtual EntityType GetType() const = 0;
 
         void OnInit(Level* level);
-
         void Remove();
 
+        void SetPosition(int x, int y);
         void UpdateLighting(const std::vector<Level::RenderTile>& lightTiles);
     public:
         int X = 0, Y = 0;

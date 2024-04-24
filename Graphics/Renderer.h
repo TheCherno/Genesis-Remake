@@ -4,7 +4,8 @@
 #include "SpriteSheet.h"
 #include "raylib.h"
 
-#include <stdint.h>
+#include <map>
+#include <cinttypes>
 
 #include "Entity/Player.h"
 
@@ -33,6 +34,7 @@ namespace Genesis {
         int GetHeight() const { return m_Height;}
         const Texture2D& GetTexture() const { return m_Texture; }
 
+        void RenderText(const char* string, int x, int y, int size, int style, int color);
         void RenderText(const std::string& string, int x, int y, int size, int style, int color);
     private:
         uint32_t ChangeBrightness(int col, int amount);
@@ -47,6 +49,6 @@ namespace Genesis {
         Image m_Image;
         Texture2D m_Texture;
         SpriteSheet m_SpriteSheet;
-        Font m_Font;
+        std::map<int, Font> m_Fonts, m_BoldFonts;
     };
 }

@@ -11,6 +11,7 @@
 #include "Random.h"
 #include "Entity/Female.h"
 #include "Entity/Player.h"
+#include "Menu/GameOverMenu.h"
 
 namespace Genesis {
     static std::unordered_map<uint32_t, Tile *> s_TileMap = {
@@ -29,6 +30,11 @@ namespace Genesis {
         {0xff206B15, &Tiles::Tree},
     };
 
+    Level::Level(Game& game)
+        : m_Game(game), m_Population(*this)
+    {
+    }
+
     Level::~Level()
     {
         delete[] m_ImageBuffer;
@@ -36,8 +42,19 @@ namespace Genesis {
 
     void Level::Load(const std::filesystem::path& path)
     {
+        // Reset
+        m_Entities.clear();
+        m_Time = 0;
+        Brightness = 0;
+        m_BrightnessDelta = 1;
+        m_Population.Reset();
+
+        delete[] m_ImageBuffer;
+        m_ImageBuffer = nullptr;
+
         m_Path = path;
         m_ImageBuffer = Utils::LoadImageBuffer(path, m_Width, m_Height);
+        ResetTimer();
 
         // Randomly scatter grass
         for (int i = 0; i < m_Width * m_Height; i++)
@@ -48,10 +65,6 @@ namespace Genesis {
                     m_ImageBuffer[i] = 0xff00ff00;
             }
         }
-
-        m_Player = std::make_shared<Player>(54 * 16, 23 * 16);
-        Add(m_Player);
-        Add(std::make_shared<Female>(66 * 16, 26 * 16));
     }
 
     void Level::OnUpdate(float ts)
@@ -66,6 +79,12 @@ namespace Genesis {
             m_Entities[i]->OnUpdate(ts);
         }
 
+        if (Play)
+        {
+            m_Player->OnUpdate(ts);
+            m_Population.OnUpdate(ts);
+        }
+
         UpdateWaterSprite();
     }
 
@@ -73,6 +92,12 @@ namespace Genesis {
     {
         m_Entities.emplace_back(entity);
         entity->OnInit(this);
+    }
+
+    void Level::AddPlayer(std::shared_ptr<Player> player)
+    {
+        m_Player = player;
+        m_Player->OnInit(this);
     }
 
     void Level::OnRender()
@@ -151,10 +176,16 @@ namespace Genesis {
             }
         }
 
-        for (auto entity: m_Entities)
+        for (auto entity : m_Entities)
         {
             entity->UpdateLighting(lightEmissionTiles); // NOTE(Yan): lightTiles for orig technique
             entity->OnRender();
+        }
+
+        if (Play)
+        {
+            m_Player->UpdateLighting(lightEmissionTiles);
+            m_Player->OnRender();
         }
 
         for (const RenderTile& treeTopTile: treeTops)
@@ -258,24 +289,41 @@ namespace Genesis {
         }
     }
 
+    void Level::ResetTimer()
+    {
+        m_TimerMin = 5;
+        m_TimerSec = 0;
+
+        UpdateTimer();
+    }
+
     void Level::UpdateTimer()
     {
         m_TimerString = std::format("{}:{}", m_TimerMin, m_TimerSec);
         if (m_TimerSec == 0 && m_TimerMin != 0)
-            m_TimerString = std::format("{}:{}0", m_TimerMin, 0);
+            m_TimerString = std::format("{}:00", m_TimerMin);
         if (m_TimerSec < 10)
-            m_TimerString = std::format("{}:{}0", m_TimerMin, m_TimerSec);
+            m_TimerString = std::format("{}:0{}", m_TimerMin, m_TimerSec);
         if (m_TimerSec <= 0 && m_TimerMin != 0)
         {
             m_TimerSec = 60;
             m_TimerMin--;
         }
 
-        m_TimerSec--;
         if (m_TimerSec <= 0 && m_TimerMin <= 0 && Play)
         {
             Play = false;
-            //Game.menu = new GameOverMenu(Game.input);
+            m_Game.SetMenu<GameOverMenu>();
+        }
+        m_TimerSec--;
+    }
+
+    void Level::RenderUI()
+    {
+        if (Play)
+        {
+            RenderTimer();
+            m_Population.OnRender();
         }
     }
 
@@ -284,10 +332,7 @@ namespace Genesis {
         int col = 0xffffffff;
         //if (Game.level instanceof SnowLevel) col = 0;
 
-        if (Play)
-        {
-            Renderer& renderer = Application::GetRenderer();
-            renderer.RenderText(m_TimerString, 450, 495, 30, 0, col);
-        }
+        Renderer& renderer = Application::GetRenderer();
+        renderer.RenderText(m_TimerString, 430, 495, 30, 1, col);
     }
 } // Gensis

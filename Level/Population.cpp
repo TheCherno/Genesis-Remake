@@ -49,6 +49,12 @@ namespace Genesis {
         //screen.renderText(populationDisplay, 900 - textLength, 30, 30, 0, col);
 
         Renderer& renderer = Application::GetRenderer();
-        renderer.RenderText(populationDisplay, 900 - textLength, 30, 30, 0, col);
+        renderer.RenderText(populationDisplay, 950 - textLength, 10, 30, 1, col);
+    }
+
+    void Population::Reset()
+    {
+        PopulationCount = 2.0;
+        Growth = 0.05;
     }
 } // Genesis

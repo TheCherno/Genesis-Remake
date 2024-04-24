@@ -2,11 +2,13 @@
 #include <filesystem>
 #include <vector>
 
+#include "Population.h"
 #include "Graphics/Sprite.h"
 
 #include "Tile.h"
 
 namespace Genesis {
+    class Game;
     class Female;
 
     class Player;
@@ -24,11 +26,15 @@ namespace Genesis {
             int x, y;
         };
     public:
-        Level() = default;
+        Level(Game& game);
         ~Level();
 
         void Add(std::shared_ptr<Entity> entity);
+        void AddPlayer(std::shared_ptr<Player> player);
+
         void Load(const std::filesystem::path& path);
+
+        std::shared_ptr<Player> GetPlayer() const { return m_Player;}
 
         void OnUpdate(float ts);
         void OnRender();
@@ -44,20 +50,25 @@ namespace Genesis {
         void Time();
 
         void UpdateTimer();
-        void RenderTimer();
+        void RenderUI();
     private:
         void UpdateWaterSprite();
         void RenderLightTile(int x, int y);
+        void RenderTimer();
+
+        void ResetTimer();
     public:
         bool Play = false;
         inline static int Brightness = 0;
     private:
+        Game& m_Game;
         std::filesystem::path m_Path;
         uint32_t* m_ImageBuffer = nullptr;
         uint32_t m_Width = 0, m_Height = 0;
 
         EntityList m_Entities;
         std::shared_ptr<Player> m_Player;
+        Population m_Population;
 
         int m_Time = 0;
         int m_BrightnessDelta = 1;

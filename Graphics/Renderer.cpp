@@ -6,6 +6,10 @@
 #include <format>
 
 namespace Genesis {
+
+    static constexpr const char* FontPath = "res/fonts/Lato-Regular.ttf";
+    static constexpr const char* FontBoldPath = "res/fonts/Lato-Bold.ttf";
+
     Renderer::Renderer(int width, int height)
         : m_Width(width), m_Height(height)
     {
@@ -18,8 +22,6 @@ namespace Genesis {
 
         m_Image = GenImageColor(m_Width, m_Height, GetColor(0xff00ffff));
         m_Texture = LoadTextureFromImage(m_Image);
-
-        m_Font = LoadFontEx("res/fonts/Lato-Bold.ttf", 30, nullptr, 0);
     }
 
     void Renderer::ClearRandom()
@@ -172,9 +174,23 @@ namespace Genesis {
         }
     }
 
+    void Renderer::RenderText(const char* string, int x, int y, int size, int style, int color)
+    {
+        Font* font = nullptr;
+
+        auto& fonts = style > 0 ? m_BoldFonts : m_Fonts;
+
+        if (!fonts.contains(size))
+            fonts[size] = LoadFontEx(style > 0 ? FontBoldPath : FontPath, size, nullptr, 0);
+
+        font = &fonts.at(size);
+
+        DrawTextEx(*font, string, {(float) x, (float) y}, size, 2.0f, GetColor(color));
+    }
+
     void Renderer::RenderText(const std::string& string, int x, int y, int size, int style, int color)
     {
-        DrawTextEx(m_Font, string.c_str(), {(float) x, (float) y}, size, 0.0f, GetColor(color));
+        RenderText(string.c_str(), x, y, size, style, color);
     }
 
     void Renderer::Update()

@@ -1,7 +1,9 @@
 #include "Entity.h"
 
 #include <cmath>
+#include <format>
 
+#include "Game.h"
 #include "raymath.h"
 
 namespace Genesis {
@@ -15,12 +17,18 @@ namespace Genesis {
         m_Level->Remove(this);
     }
 
+    void Entity::SetPosition(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
     void Entity::UpdateLighting(const std::vector<Level::RenderTile>& lightTiles)
     {
         m_LightDist = -1;
 
         int lightSize = 48;
-        Vector2 playerPosition = {(float)X, (float)Y};
+        Vector2 playerPosition = {(float)X + 8, (float)Y + 8};
 
         for (auto rt : lightTiles)
         {
@@ -29,7 +37,9 @@ namespace Genesis {
             if (distance > lightSize)
                 continue;
 
-            m_LightDist = Clamp(distance, 0.0f, (float)lightSize) * 2.0f;
+            distance = Clamp(distance, 0.0f, (float)lightSize) * 2.0f;
+            if (m_LightDist == -1 || distance < m_LightDist)
+                m_LightDist = distance;
         }
 
         return;

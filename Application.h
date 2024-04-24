@@ -33,6 +33,7 @@ namespace Genesis {
         Renderer m_Renderer;
         std::unique_ptr<Game> m_Game;
 
+        Image m_Icon;
         float m_Time = 0.0f;
 
     };

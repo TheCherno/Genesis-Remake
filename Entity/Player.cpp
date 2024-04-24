@@ -5,6 +5,7 @@
 #include "Female.h"
 #include "ForestMob.h"
 #include "Random.h"
+#include "Sound/Sound.h"
 
 namespace Genesis {
     Player::Player(int x, int y)
@@ -120,7 +121,7 @@ namespace Genesis {
                 int spawnCount = Random::Int(3) + 1;
                 for (int c = 0; c < spawnCount; c++)
                 {
-                    // Sound.breed.play(false);
+                    Sounds::Breed.Play();
                     m_Level->Add(std::make_shared<ForestMob>(X, Y));
                 }
                 Population::Growth += (Population::Growth / 4);
