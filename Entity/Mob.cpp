@@ -1,5 +1,8 @@
 #include "Mob.h"
 
+#include "Application.h"
+#include "Graphics/Renderer.h"
+
 namespace Genesis {
 
     void Mob::Move(int xa, int ya)
@@ -19,7 +22,7 @@ namespace Genesis {
         if (ya < 0)
             m_Dir = 0;
 
-        if ((!Collision(xa, ya) && !Collision2(xa, ya)))
+        if (!Collision(xa, ya) && !Collision2(xa, ya))
         {
             X += xa;
             Y += ya;
@@ -33,8 +36,8 @@ namespace Genesis {
         {
             int xt = ((X + xa) + (i % 2 * 2) * 5) >> 4;
             int yt = ((Y + ya) + (i / 2 * 2 - 4) * 2) >> 4;
-           // if (m_Level->GetTile(xt, yt + 1).solid())
-           //     solid = true;
+            if (m_Level->GetTile(xt, yt + 1).Solid)
+                solid = true;
         }
         return solid;
     }
@@ -46,9 +49,16 @@ namespace Genesis {
         {
             int xt = ((X + xa) + (i % 2 * 2 - 1) * 4) >> 4;
             int yt = ((Y + ya) + (i / 2 * 2 - 1) * 4) >> 4;
-           // if (m_Level->GetTile2(xt, yt).solid())
-           //     solid = true;
+            if (m_Level->GetTile2(xt, yt).Solid)
+                solid = true;
         }
         return solid;
+    }
+
+    void Mob::OnRender()
+    {
+        Renderer& renderer = Application::GetRenderer();
+        UpdateSprite();
+        renderer.RenderMob(X, Y, this, m_SpriteFlip);
     }
 } // Genesis

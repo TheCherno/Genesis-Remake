@@ -10,12 +10,14 @@ namespace Genesis {
         Player(int x, int y);
 
         virtual void OnUpdate(float ts) override;
-        virtual void OnRender() override;
+
+        virtual EntityType GetType() const override { return EntityType::Player; }
+    protected:
+        virtual void UpdateSprite() override;
     private:
-        void UpdateSprite();
+        void CheckFemaleCollision();
+        std::pair<int, int> GenerateFemaleSpawn();
     private:
-        int m_SpriteFlip = 0;
-        int m_Anim = 0;
         bool m_Night = false;
     };
 

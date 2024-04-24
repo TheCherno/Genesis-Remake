@@ -55,6 +55,14 @@ add_executable(${PROJECT_NAME} main.cpp
         Entity/Player.h
         Level/Tile.cpp
         Level/Tile.h
+        Entity/Female.cpp
+        Entity/Female.h
+        Entity/ForestMob.cpp
+        Entity/ForestMob.h
+        Level/Population.cpp
+        Level/Population.h
+        Level/LightTile.cpp
+        Level/LightTile.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

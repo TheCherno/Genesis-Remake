@@ -19,6 +19,16 @@ namespace Genesis {
             return s_Distribution(s_RandomEngine);
         }
 
+        static uint32_t UInt(uint32_t max)
+        {
+            return s_Distribution(s_RandomEngine) % (max + 1);
+        }
+
+        static int Int(uint32_t max)
+        {
+            return (int)UInt(max);
+        }
+
         static uint32_t UInt(uint32_t min, uint32_t max)
         {
             return min + (s_Distribution(s_RandomEngine) % (max - min + 1));

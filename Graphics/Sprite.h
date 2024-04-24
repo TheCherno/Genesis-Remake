@@ -7,6 +7,16 @@ namespace Genesis {
         int X = 0;
         int Y = 0;
         int Size = 16;
+
+        bool operator==(const Sprite& other) const
+        {
+            return X == other.X && Y == other.Y;
+        }
+
+        bool operator!=(const Sprite& other) const
+        {
+            return !(*this == other);
+        }
     };
 
     namespace Sprites {
