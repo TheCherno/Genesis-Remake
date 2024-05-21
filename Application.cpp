@@ -31,6 +31,24 @@ namespace Genesis {
         return *s_Instance;
     }
 
+    void Application::Loop()
+    {
+        m_Time += 0.0167f;
+        OnUpdate();
+        OnRender();
+
+        while (GetTime() - m_LastTime > 1.0)
+        {
+            m_LastTime++;
+            m_Game->OncePerSecond();
+        }
+    }
+
+    void Application::StaticLoop()
+    {
+        s_Instance->Loop();
+    }
+
     void Application::Run()
     {
         InitWindow(m_Specification.Width * m_Specification.Scale, m_Specification.Height * m_Specification.Scale, "Genesis");
@@ -38,28 +56,18 @@ namespace Genesis {
         m_Icon = LoadImage("res/icon.png");
         SetWindowIcon(m_Icon);
 
-#if defined(PLATFORM_WEB)
-        emscripten_set_main_loop([this](){ OnUpdate(); }, 0, 1);
-#else
         SetTargetFPS(60);
 
         m_Renderer.Init();
-
         m_Game = std::make_unique<Game>();
+        m_LastTime = GetTime();
 
-        double lastTime = GetTime();
-
+#if defined(PLATFORM_WEB)
+        emscripten_set_main_loop(StaticLoop, 0, 1);
+#else
         while (!WindowShouldClose())    // Detect window close button or ESC key
         {
-            m_Time += 0.0167f;
-            OnUpdate();
-            OnRender();
-
-            while (GetTime() - lastTime > 1.0)
-            {
-                lastTime++;
-                m_Game->OncePerSecond();
-            }
+            Loop();
         }
 #endif
         CloseAudioDevice();

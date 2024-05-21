@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 3.28)
 project(Genesis_Cpp)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -s -mwindows")
 set(CMAKE_EXE_LINKER_FLAGS "-static")
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
+
+if (${PLATFORM} STREQUAL "Desktop")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -s -mwindows")
+endif()
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -82,12 +85,15 @@ target_link_libraries(${PROJECT_NAME} raylib)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
 target_precompile_headers(${PROJECT_NAME} PUBLIC gpch.h)
 
-target_sources(${PROJECT_NAME} PRIVATE res/app.rc)
+if (${PLATFORM} STREQUAL "Desktop")
+    target_sources(${PROJECT_NAME} PRIVATE res/app.rc)
+endif()
 
 # Web Configurations
 if (${PLATFORM} STREQUAL "Web")
     # Tell Emscripten to build an example.html file.
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".html")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1 --preload-file ../res")
 endif()
 
 # Checks if OSX and links appropriate frameworks (Only required on MacOS)

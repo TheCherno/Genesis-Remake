@@ -29,9 +29,14 @@ namespace Genesis {
         static Application& Get();
         static Renderer& GetRenderer() { return Get().m_Renderer; };
     private:
+        void Loop();
+        static void StaticLoop();
+    private:
         ApplicationSpecification m_Specification;
         Renderer m_Renderer;
         std::unique_ptr<Game> m_Game;
+
+        double m_LastTime;
 
         Image m_Icon;
         float m_Time = 0.0f;

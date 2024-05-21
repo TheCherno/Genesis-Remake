@@ -281,7 +281,7 @@ namespace Genesis {
                 }
                 int xTile = x * 16 + xx * 16;
                 int yTile = y * 16 + yy * 16;
-                double r = std::abs((std::pow(xx * std::numbers::pi, 2)) + std::abs(std::pow(yy * std::numbers::pi, 2)));
+                double r = std::abs((std::pow(xx * PI, 2)) + std::abs(std::pow(yy * PI, 2)));
                 double intensity = r * tb * 0.00012;
                 if (r < 100)
                     renderer.RenderLight(xTile, yTile, tile.Sprite, 62, 64, 65, intensity);
