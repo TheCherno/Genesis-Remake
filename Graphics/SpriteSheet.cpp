@@ -1,19 +1,22 @@
 #include "SpriteSheet.h"
 
 #include "ImageUtils.h"
+#include "Utils/Utils.h"
 
 namespace Genesis {
 
     SpriteSheet::SpriteSheet(const std::filesystem::path& path)
     {
-        if (!std::filesystem::exists(path))
+        std::filesystem::path finalPath = Genesis::Utils::ResolvePath(path);
+
+        if (!std::filesystem::exists(finalPath))
         {
-            std::cerr << "Sprite sheet doesn't exist! " << path << std::endl;
+            std::cerr << "Sprite sheet doesn't exist! " << finalPath << std::endl;
             ASSERT(false);
             return;
         }
 
-        m_ImageBuffer = Utils::LoadImageBuffer(path, m_Width, m_Height);
+        m_ImageBuffer = Utils::LoadImageBuffer(finalPath, m_Width, m_Height);
     }
 
     SpriteSheet::SpriteSheet(SpriteSheet&& other)

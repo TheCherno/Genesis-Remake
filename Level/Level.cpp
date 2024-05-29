@@ -12,6 +12,7 @@
 #include "Entity/Female.h"
 #include "Entity/Player.h"
 #include "Menu/GameOverMenu.h"
+#include "Utils/Utils.h"
 
 namespace Genesis {
     static std::unordered_map<uint32_t, Tile *> s_TileMap = {
@@ -52,8 +53,10 @@ namespace Genesis {
         delete[] m_ImageBuffer;
         m_ImageBuffer = nullptr;
 
-        m_Path = path;
-        m_ImageBuffer = Utils::LoadImageBuffer(path, m_Width, m_Height);
+        std::filesystem::path finalPath = Genesis::Utils::ResolvePath(path);
+
+        m_Path = finalPath;
+        m_ImageBuffer = Utils::LoadImageBuffer(finalPath, m_Width, m_Height);
         ResetTimer();
 
         // Randomly scatter grass

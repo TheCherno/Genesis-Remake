@@ -2,6 +2,7 @@
 
 #include "../Random.h"
 #include "SpriteSheet.h"
+#include "Utils/Utils.h"
 
 #include <format>
 
@@ -180,8 +181,14 @@ namespace Genesis {
 
         auto& fonts = style > 0 ? m_BoldFonts : m_Fonts;
 
-        if (!fonts.contains(size))
-            fonts[size] = LoadFontEx(style > 0 ? FontBoldPath : FontPath, size, nullptr, 0);
+        if (!fonts.contains(size)) {
+            const char *path = style > 0 ? FontBoldPath : FontPath;
+            char *finalPath = Genesis::Utils::ResolvePath(path);
+
+            fonts[size] = LoadFontEx(finalPath, size, nullptr, 0);
+
+            free(finalPath);
+        }
 
         font = &fonts.at(size);
 
