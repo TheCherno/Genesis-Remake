@@ -3,7 +3,13 @@ project(Genesis_Cpp)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXE_LINKER_FLAGS "-static")
+
+if (APPLE)
+set(CMAKE_EXE_LINKER_FLAGS "")
+else()
 set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 
 if (${PLATFORM} STREQUAL "Desktop")
@@ -79,6 +85,8 @@ add_executable(${PROJECT_NAME} main.cpp
         Menu/GameOverMenu.h
         Sound/Sound.cpp
         Sound/Sound.h
+        Utils/Utils.cpp
+        Utils/Utils.h
 )
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
@@ -102,3 +110,29 @@ if (APPLE)
     target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
     target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
 endif()
+
+# Copy resources after build
+if (APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE True
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.studiocherno.genesis-remake
+        MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+        MACOSX_BUNDLE_BUNDLE_VERSION "0.1"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/Info.plist.in
+    )
+
+    file(GLOB_RECURSE Resources "${CMAKE_SOURCE_DIR}/res/**")
+
+    foreach(FILE ${Resources})
+      target_sources(${PROJECT_NAME} PUBLIC ${FILE})
+
+      file(RELATIVE_PATH NEW_FILE "${CMAKE_SOURCE_DIR}/res" ${FILE})
+      get_filename_component(NEW_PATH ${NEW_FILE} DIRECTORY)
+
+      set_source_files_properties(${FILE} PROPERTIES
+          MACOSX_PACKAGE_LOCATION "Resources/res/${NEW_PATH}"
+      )
+    endforeach()
+endif()
+

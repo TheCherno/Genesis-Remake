@@ -1,4 +1,5 @@
 #include "Sound.h"
+#include "Utils/Utils.h"
 
 namespace Genesis {
     Sound::Sound(const std::filesystem::path& path, bool stream)
@@ -7,9 +8,11 @@ namespace Genesis {
         if (!IsAudioDeviceReady())
             InitAudioDevice();
 
+        std::filesystem::path finalPath = Genesis::Utils::ResolvePath(path);
+
         ASSERT(IsAudioDeviceReady());
-        ASSERT(std::filesystem::exists(path));
-        std::string pathStr = path.string();
+        ASSERT(std::filesystem::exists(finalPath));
+        std::string pathStr = finalPath.string();
 
         if (stream)
         {
